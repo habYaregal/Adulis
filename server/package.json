@@ -1,0 +1,12 @@
+{
+  "name": "adulis-server",
+  "version": "1.0.0",
+  "description": "the backend side of the adulis project",
+  "main": "server.js",
+  "scripts": {
+    "dev":"nodemon server.js",
+    "start":"node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
