@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "the backend side of the adulis project",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "dev":"nodemon server.js",
     "start":"node server.js"
