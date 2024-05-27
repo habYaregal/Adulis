@@ -1,1 +1,3 @@
-import src from "./src/index.js";
+import src from './src/index.js';
+
+src();
