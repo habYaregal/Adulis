@@ -10,6 +10,6 @@ router.get('/users',getUsers);
 router.post('/register', validation.registerValidation ,validationMiddleware,register)
 router.post('/login', validation.loginValidation ,validationMiddleware,login)
 router.get('/protected',userAuth,protect)
-router.get('/logout',userAuth,logout)
+router.get('/logout',logout)
 
 export const authRoutes = router
