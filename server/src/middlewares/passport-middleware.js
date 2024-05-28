@@ -6,8 +6,8 @@ import { db } from "../db/index.js";
 const SECRET = Keys.SECRET;
 const cookieExtractor = function (req) {
   let token = null
-  if (req && req.cookies) token = req.cookies['value']
-  return token;
+  if (req && req.cookies) token = req.cookies['token']
+  return token
 }
 
 const opts = {
@@ -16,14 +16,12 @@ const opts = {
 }
 
 passport.use(
-  new JwtStrategy(opts, async (jwt_payload, done) => {
-    const id=jwt_payload.sub
+  new JwtStrategy(opts, async ({ id }, done) => {
     try {
       const { rows } = await db.query(
-        'SELECT id, email FROM users WHERE id = $1',
+        'SELECT id, email FROM example WHERE id = $1',
         [id]
       )
-
       if (!rows.length) {
         throw new Error('401 not authorized')
       }

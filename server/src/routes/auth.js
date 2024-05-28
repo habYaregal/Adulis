@@ -9,7 +9,7 @@ const router= Router();
 router.get('/users',getUsers);
 router.post('/register', validation.registerValidation ,validationMiddleware,register)
 router.post('/login', validation.loginValidation ,validationMiddleware,login)
-router.get('/protected',userAuth)
-router.get('/logout',logout)
+router.get('/protected',userAuth,protect)
+router.get('/logout',userAuth,logout)
 
 export const authRoutes = router
