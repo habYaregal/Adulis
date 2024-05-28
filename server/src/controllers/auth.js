@@ -43,7 +43,6 @@ export const login = async(req,res)=>{
   }
   try {
     const token = sign(payload, SECRET)
-
     return res.status(200).cookie('token', token, { httpOnly: true }).json({
       success: true,
       message: 'Logged in succefully',
@@ -53,7 +52,31 @@ export const login = async(req,res)=>{
     console.log(error.message);
     return res.status(500).json({
       sucess: false,
-      message: 'the registration was not sucessful'
+      message: 'login was not sucessful'
     })
   }
 };
+export const protect = async (req, res) => {
+  try {
+    return res.status(200).json({
+      info: 'protected info',
+    })
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+export const logout = async(req,res)=>{
+  try {
+    return res.status(200).clearCookie('token', { httpOnly: true }).json({
+      success: true,
+      message: 'Logged out succefully',
+    })
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({
+      sucess: false,
+      message: 'the registration was not sucessful'
+    })
+  }
+}
