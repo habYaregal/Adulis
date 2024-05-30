@@ -1,11 +1,13 @@
-import { useState } from 'react'
-function App() {
+import Auth from "./routes/Auth";
+import Navbar from "./components/Navbar";
 
+const App = () => {
   return (
     <>
-    <p class="text-3xl font-bold underline">heloo</p>
+      <Navbar/>
+      <Auth/>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
