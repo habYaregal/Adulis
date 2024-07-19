@@ -16,6 +16,10 @@ export async function onLogout() {
   return await axios.get('http://localhost:3000/api/logout')
 }
 
+export async function onGetUsers(){
+  return await axios.get('http://localhost:3000/api/users')
+}
+
 export async function fetchProtectedInfo() {
   return await axios.get('http://localhost:3000/api/protected')
 }

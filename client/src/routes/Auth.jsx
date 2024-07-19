@@ -4,11 +4,16 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
-import Home from "../pages/Home";
 import Login from "../pages/authentication/Login";
-import Dashboard from "../pages/Dashboard";
-import Register from "../pages/authentication/Register";
 import { useSelector } from "react-redux";
+import LandingAuth from "./Landing";
+import ChooseUser from "../pages/landing/ChooseUser";
+import ShipperRegister from "../pages/authentication/ShipperRegister";
+import ShipperHome from "../pages/shipper/Home";
+import NewShipment from "../pages/shipper/new_shipment/NewShipment";
+import CarrierRegister from "../pages/authentication/CarrierRegister";
+import CarrierHome from "../pages/carrier/Home";
+
 
 const PrivateRoutes = () => {
   const { isAuth } = useSelector((state) => state.auth)
@@ -18,20 +23,32 @@ const PrivateRoutes = () => {
 const RestrictedRoutes = () => {
   const { isAuth } = useSelector((state) => state.auth)
 
-  return <>{!isAuth ? <Outlet /> : <Navigate to="/dashboard" />}</>;
+  return <>{!isAuth ? <Outlet /> : <Navigate to="/shipper" />}</>;
 };
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <LandingAuth/>,
+  },
+  {
+    path: "/chooseuser",
+    element: <ChooseUser/>,
+  },
+  {
+    path:"/carrier",
+    element:<CarrierHome/>
   },
   {
     element: <PrivateRoutes />,
     children: [
       {
-        path: "/dashboard",
-        element: <Dashboard />,
+        path:"/shipper",
+        element:<ShipperHome/>
+      },
+      {
+        path:"/createshipment",
+        element:<NewShipment/>
       },
     ],
   },
@@ -43,8 +60,12 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "/register",
-        element: <Register />,
+        path: "/shipper_register",
+        element: <ShipperRegister/>,
+      },
+      {
+        path: "/carrier_register",
+        element: <CarrierRegister/>,
       },
     ],
   },
