@@ -8,14 +8,14 @@ const password = check('password').isLength({min: 6,}).withMessage('Password len
 const email= check('email').isEmail().withMessage('please insert a valid email');
 const emailExist= check('email').custom(
     async (value)=> {
-        const {rows} = await db.query('select * from example WHERE email = $1',[value]);
+        const {rows} = await db.query('select * from users WHERE email = $1',[value]);
         if (rows.length){
             throw new Error('email already exists');
         }
     }
 );
 const loginSuccess= check('email').custom(async(value,{req})=>{
-    const user= await db.query('select * from example WHERE email = $1',[value]);
+    const user= await db.query('select * from users WHERE email = $1',[value]);
 
     if(!user.rows.length){
         throw new Error("email doesn't exists");

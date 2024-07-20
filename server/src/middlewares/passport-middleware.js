@@ -19,7 +19,7 @@ passport.use(
   new JwtStrategy(opts, async ({ id }, done) => {
     try {
       const { rows } = await db.query(
-        'SELECT id, email FROM example WHERE id = $1',
+        'SELECT id, email FROM users WHERE id = $1',
         [id]
       )
       if (!rows.length) {

@@ -9,8 +9,9 @@ const SECRET = Keys.SECRET;
 
 export const getUsers = async (req, res) => {
   try {
-    const response = await db.query("select email from example");
-    res.send(response.rows);
+    const email=req.user.email;
+    const response = await db.query("select * from users where email = $1",[email]);
+    res.json(response.rows);
   } catch (error) {
     console.log(error.message);
   }
@@ -18,9 +19,16 @@ export const getUsers = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, firstName,number,lastName,region,city,userType,tinNumber } = req.body;
     const hashedPassword= await hash(password,10);
-    await db.query("insert into example (email,password) values($1,$2)",[email,hashedPassword]);
+    console.log(tinNumber);
+    await db.query("insert into users (email,password,username,phone_number,user_type) values($1,$2,$3,$4,$5)",[email,hashedPassword,firstName,number,userType]);
+    const user_id= await db.query('select id from users WHERE email = $1',[email]);
+    if(userType==='shipper'){
+        await db.query("insert into shippers (id,f_name,l_name,region,city) values($1,$2,$3,$4,$5)",[user_id.rows[0].id,firstName,lastName,region,city]);
+    }else{
+      await db.query("insert into carriers (id,f_name,l_name,region,city,tin) values($1,$2,$3,$4,$5,$6)",[user_id.rows[0].id,firstName,lastName,region,city,tinNumber]);
+    }
     return res.status(201).json({
       sucess: true,
       message: 'the registration was sucessful'
@@ -76,7 +84,7 @@ export const logout = async(req,res)=>{
     console.log(error.message);
     return res.status(500).json({
       sucess: false,
-      message: 'the registration was not sucessful'
+      message: 'can not logged out now'
     })
   }
 }

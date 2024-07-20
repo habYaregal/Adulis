@@ -5,6 +5,7 @@ import './middlewares/passport-middleware.js';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import cors from 'cors';
+import { shipmentRoutes } from './routes/shipment.js';
 
 
 const app= express();
@@ -17,6 +18,7 @@ app.use(cors({ origin: CLIENT_URL, credentials: true }))
 app.use(passport.initialize())
 
 app.use('/api',authRoutes);
+app.use('/api',shipmentRoutes)
 
 const appStart = () =>{
     try {
