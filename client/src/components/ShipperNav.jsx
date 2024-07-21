@@ -17,7 +17,7 @@ const user = {
 
 const initialNavigation = [
   { name: 'Home', href: '/shipper', current: true },
-  { name: 'Bids', href: '/bids', current: false },
+  { name: 'Bids', href: '/shipper_bids', current: false },
   { name: 'Message', href: '/message', current: false },
   { name: 'Create', href: '/createshipment', current: false },
 ];
@@ -46,6 +46,7 @@ const ShipperNavigation = () => {
   };
 
   const [profile, setProfile] = useState('');
+
   const logout = async () => {
     try {
       await onLogout();
@@ -62,20 +63,29 @@ const ShipperNavigation = () => {
     }
   };
 
-  const [users, setUsers] = useState(null);
+  const getCookies = () => {
+    const cookies = document.cookie.split('; ');
+    const cookieObject = {};
 
-  const fetchUser = async () => {
-    const userCookie = Cookies.get('user');
-    if (userCookie) {
-      setUsers(JSON.parse(userCookie));
-    }
+    cookies.forEach(cookie => {
+      const [name, ...value] = cookie.split('=');
+      if (name) {
+        cookieObject[name.trim()] = value.join('=').trim();
+      }
+    });
+
+    return cookieObject;
   };
 
+  const [cookies, setCookies] = useState({});
+
   useEffect(() => {
-    fetchUser();
+    const cookiesData = getCookies();
+    console.log("Fetched Cookies:", cookiesData); // Debug log to check fetched cookies
+    setCookies(cookiesData);
   }, []);
 
-  console.log(users);
+  console.log("Cookies State:", JSON.stringify(cookies, null, 2)); // Debug log to check cookies state
 
   return (
     <Disclosure as="header" className="bg-main-800">
@@ -125,10 +135,11 @@ const ShipperNavigation = () => {
                   className="bg-gray-800 flex-shrink-0 rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                 >
                   <span className="sr-only">View notifications</span>
-                  <p>{users}</p>
+                  <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
                 <Menu as="div" className="flex-shrink-0 relative ml-4">
-                  <div>
+                  <div className="flex items-center">
+                    <span className="text-white mr-3">{JSON.stringify(cookies, null, 2)}</span>
                     <Menu.Button className="bg-gray-800 rounded-full flex text-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                       <span className="sr-only">Open user menu</span>
                       <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />
@@ -191,45 +202,14 @@ const ShipperNavigation = () => {
                   to={item.href}
                   onClick={() => handleNavigationClick(item)}
                   className={classNames(
-                    location.pathname === item.href ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                    'block rounded-md py-2 px-3 text-base font-medium'
+                    location.pathname === item.href ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-main-600 hover:text-white',
+                    'rounded-md py-2 px-3 inline-flex items-center text-sm font-medium'
                   )}
                   aria-current={location.pathname === item.href ? 'page' : undefined}
                 >
                   {item.name}
                 </Disclosure.Button>
               ))}
-            </div>
-            <div className="border-t border-gray-700 pt-4 pb-3">
-              <div className="px-4 flex items-center">
-                <div className="flex-shrink-0">
-                  <img className="h-10 w-10 rounded-full" src={user.imageUrl} alt="" />
-                </div>
-                <div className="ml-3">
-                  <div className="text-base font-medium text-white">{user.name}</div>
-                  <div className="text-sm font-medium text-gray-400">{user.email}</div>
-                </div>
-                <button
-                  type="button"
-                  className="ml-auto flex-shrink-0 bg-gray-800 rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-              </div>
-              <div className="mt-3 px-2 space-y-1">
-                {userNavigation.map((item) => (
-                  <Disclosure.Button
-                    key={item.name}
-                    as="a"
-                    href={item.href}
-                    onClick={() => handleUserNavigationClick(item)}
-                    className="block rounded-md py-2 px-3 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                  >
-                    {item.name}
-                  </Disclosure.Button>
-                ))}
-              </div>
             </div>
           </Disclosure.Panel>
         </>

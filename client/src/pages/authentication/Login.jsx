@@ -22,6 +22,8 @@ const Login = () => {
       await onLogin(values);
       dispatch(authenticateUser());
       localStorage.setItem("isAuth", "true");
+
+
     } catch (error) {
       setError(error.response.data.errors[0].msg);
       setSuccess("");

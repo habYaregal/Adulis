@@ -1,20 +1,31 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/Adulis-logo.png";
 
 const CarrierNav = () => {
   const initialMenuItems = [
     { name: "Home", link: "/carrier" },
-    { name: "Bids", link: "/arts" },
+    { name: "Bids", link: "/carrier_bids" },
     { name: "Message", link: "/space" },
     { name: "Create", link: "/game" },
   ];
 
+  const location = useLocation();
   const [style, setStyle] = useState(
-    initialMenuItems.map((_, index) => index === 0)
+    initialMenuItems.map((item) => location.pathname === item.link)
   );
   const [dropDown, setDropDown] = useState(true);
-  const [text, setText] = useState(initialMenuItems[0].name);
+  const [text, setText] = useState(
+    initialMenuItems.find((item) => location.pathname === item.link)?.name || initialMenuItems[0].name
+  );
+
+  useEffect(() => {
+    const activeIndex = initialMenuItems.findIndex(
+      (item) => item.link === location.pathname
+    );
+    setStyle(style.map((_, i) => i === activeIndex));
+    setText(initialMenuItems[activeIndex]?.name || initialMenuItems[0].name);
+  }, [location]);
 
   const selected = (index) => {
     setStyle(style.map((_, i) => i === index));
@@ -30,7 +41,7 @@ const CarrierNav = () => {
       <div className="bg-white rounded shadow-lg py-5 px-7">
         <nav className="flex justify-between">
           <div className="flex items-center space-x-3 lg:pr-16 pr-6">
-            <img src={logo} className="h-16" />
+            <img src={logo} className="h-16" alt="Logo" />
           </div>
           {/* For medium and plus sized devices */}
           <ul className="hidden md:flex flex-auto justify-center items-center text-2xl space-x-2">

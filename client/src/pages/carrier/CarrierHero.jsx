@@ -1,4 +1,6 @@
 import React from "react";
+import celebrate from '../../assets/images/Celebrate.jpg'
+
 
 const CarrierHero = () => {
   return (
@@ -22,7 +24,7 @@ const CarrierHero = () => {
             <div className="w-full md:w-2/5 h-64 md:h-auto m-auto flex items-center overflow-hidden">
               <img
                 className="md:absolute md:w-1/2 md:-ml-28"
-                src="https://cdn.tuk.dev/assets/components/111220/Hero4/Device - Macbook Pro.png"
+                src={celebrate}
                 alt="Device"
               />
             </div>

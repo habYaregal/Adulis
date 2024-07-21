@@ -63,6 +63,7 @@ const ShipperRegister = () => {
       });
       dispatch(authenticateUser())
       localStorage.setItem('isAuth', 'true')
+      localStorage.setItem('isShipper', 'true')
     } catch (error) {
       setError(error.response.data.errors[0].msg);
       setSuccess("");
