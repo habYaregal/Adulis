@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import cors from 'cors';
 import { shipmentRoutes } from './routes/shipment.js';
+import { bidsRoutes } from './routes/bids.js';
 
 
 const app= express();
@@ -18,7 +19,8 @@ app.use(cors({ origin: CLIENT_URL, credentials: true }))
 app.use(passport.initialize())
 
 app.use('/api',authRoutes);
-app.use('/api',shipmentRoutes)
+app.use('/api',shipmentRoutes);
+app.use('/api',bidsRoutes);
 
 const appStart = () =>{
     try {

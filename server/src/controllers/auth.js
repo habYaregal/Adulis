@@ -44,24 +44,28 @@ export const register = async (req, res) => {
 
 export const login = async(req,res)=>{
   let user= req.user;
-
+  user.password = undefined;
   let payload={
     id: user.id,
-    email: user.email
+    email: user.email,
+    name: user
   }
   try {
-    const token = sign(payload, SECRET)
-    return res.status(200).cookie('token', token, { httpOnly: true }).json({
+    const token = jwt.sign(payload, SECRET);
+    res.cookie('token', token, {
+      // httpOnly removed for client-side access
+    });
+    res.status(200).json({
       success: true,
-      message: 'Logged in succefully',
-    })
-    
+      message: 'Logged in successfully'
+    });
   } catch (error) {
-    console.log(error.message);
-    return res.status(500).json({
-      sucess: false,
-      message: 'login was not sucessful'
-    })
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Login failed',
+      error: error.message
+    });
   }
 };
 export const protect = async (req, res) => {
