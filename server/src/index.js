@@ -7,6 +7,7 @@ import passport from 'passport';
 import cors from 'cors';
 import { shipmentRoutes } from './routes/shipment.js';
 import { bidsRoutes } from './routes/bids.js';
+import { truckRoutes } from './routes/truck.js';
 
 
 const app= express();
@@ -21,6 +22,7 @@ app.use(passport.initialize())
 app.use('/api',authRoutes);
 app.use('/api',shipmentRoutes);
 app.use('/api',bidsRoutes);
+app.use('/api',truckRoutes);
 
 const appStart = () =>{
     try {

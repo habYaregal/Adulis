@@ -2,6 +2,7 @@ import CarrierNav from "../../components/CarrierNav";
 import Footer from "../../components/Footer";
 import CarrierHero from "./CarrierHero";
 import MyComponent from "./Example";
+import NewTruck from "./NewTruck";
 import ShipmentList from "./ShipmentList";
 import SubmitBid from "./SubmitBid";
 

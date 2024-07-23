@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage } from "../../../firebase"; // Adjust the import path as needed
-import { onShipmentPost } from "../../../api/shipment"; // Adjust the import path as needed
+import { storage } from "../../../firebase"; 
+import { onShipmentPost } from "../../../api/shipment"; 
 
 const ShipmentPost = () => {
   const [formValues, setFormValues] = useState({
@@ -160,8 +160,6 @@ const ShipmentPost = () => {
             </div>
           </div>
         )}
-
-        {/* buttons */}
         <span className="text-red-600 font-semibold">{error}</span>
         <span className="text-green-600 font-semibold">{success}</span>
         <div className="buttons flex mt-4 justify-end">

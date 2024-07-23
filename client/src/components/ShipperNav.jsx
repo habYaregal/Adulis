@@ -1,13 +1,12 @@
 import { Fragment, useState, useEffect } from 'react';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
 import { SearchIcon } from '@heroicons/react/solid';
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
+import { MenuIcon, XIcon } from '@heroicons/react/outline'; // Removed BellIcon
 import { Link, useLocation } from 'react-router-dom';
 import logo from "../../src/assets/images/Adulis_logo.png";
 import { useDispatch } from 'react-redux';
-import { fetchProtectedInfo, onGetUsers, onLogout } from '../api/auth';
+import { onLogout } from '../api/auth'; // Removed fetchProtectedInfo and onLogin
 import { unauthenticateUser } from '../redux/slices/authSlice';
-import Cookies from 'js-cookie';
 
 const user = {
   name: 'Tom Cook',
@@ -20,6 +19,7 @@ const initialNavigation = [
   { name: 'Bids', href: '/shipper_bids', current: false },
   { name: 'Message', href: '/message', current: false },
   { name: 'Create', href: '/createshipment', current: false },
+  { name: 'Trucks', href: '/trucks', current: false }, // Added Truck navigation item
 ];
 
 const userNavigation = [
@@ -36,7 +36,9 @@ const ShipperNavigation = () => {
   const [navigation, setNavigation] = useState(initialNavigation);
   const location = useLocation();
   const dispatch = useDispatch();
-
+  
+  const [username, setUsername] = useState(''); // State for storing the username
+  
   const handleNavigationClick = (clickedItem) => {
     const updatedNavigation = navigation.map((item) => ({
       ...item,
@@ -44,8 +46,6 @@ const ShipperNavigation = () => {
     }));
     setNavigation(updatedNavigation);
   };
-
-  const [profile, setProfile] = useState('');
 
   const logout = async () => {
     try {
@@ -63,29 +63,13 @@ const ShipperNavigation = () => {
     }
   };
 
-  const getCookies = () => {
-    const cookies = document.cookie.split('; ');
-    const cookieObject = {};
-
-    cookies.forEach(cookie => {
-      const [name, ...value] = cookie.split('=');
-      if (name) {
-        cookieObject[name.trim()] = value.join('=').trim();
-      }
-    });
-
-    return cookieObject;
-  };
-
-  const [cookies, setCookies] = useState({});
-
+  // Fetch the username from localStorage when the component mounts
   useEffect(() => {
-    const cookiesData = getCookies();
-    console.log("Fetched Cookies:", cookiesData); // Debug log to check fetched cookies
-    setCookies(cookiesData);
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (userData && userData.username) {
+      setUsername(userData.username);
+    }
   }, []);
-
-  console.log("Cookies State:", JSON.stringify(cookies, null, 2)); // Debug log to check cookies state
 
   return (
     <Disclosure as="header" className="bg-main-800">
@@ -130,16 +114,11 @@ const ShipperNavigation = () => {
                 </Disclosure.Button>
               </div>
               <div className="hidden lg:relative lg:z-10 lg:ml-4 lg:flex lg:items-center">
-                <button
-                  type="button"
-                  className="bg-gray-800 flex-shrink-0 rounded-full p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
+                <div className="flex items-center text-white">
+                  <span className="mr-2">{username || 'User'}</span> {/* Display username */}
+                </div>
                 <Menu as="div" className="flex-shrink-0 relative ml-4">
                   <div className="flex items-center">
-                    <span className="text-white mr-3">{JSON.stringify(cookies, null, 2)}</span>
                     <Menu.Button className="bg-gray-800 rounded-full flex text-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                       <span className="sr-only">Open user menu</span>
                       <img className="h-8 w-8 rounded-full" src={user.imageUrl} alt="" />

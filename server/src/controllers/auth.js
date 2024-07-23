@@ -1,16 +1,16 @@
 import { db } from "../db/index.js";
 import bcryptjs from 'bcryptjs';
 import jsonwebtoken from 'jsonwebtoken';
-import {Keys} from '../models/index.js';
+import { Keys } from '../models/index.js';
 
 const hash = bcryptjs.hash;
-const sign= jsonwebtoken.sign;
+const sign = jsonwebtoken.sign;
 const SECRET = Keys.SECRET;
 
 export const getUsers = async (req, res) => {
   try {
-    const email=req.user.email;
-    const response = await db.query("select * from users where email = $1",[email]);
+    const email = req.user.email;
+    const response = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     res.json(response.rows);
   } catch (error) {
     console.log(error.message);
@@ -19,45 +19,61 @@ export const getUsers = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { email, password, firstName,number,lastName,region,city,userType,tinNumber } = req.body;
-    const hashedPassword= await hash(password,10);
-    console.log(tinNumber);
-    await db.query("insert into users (email,password,username,phone_number,user_type) values($1,$2,$3,$4,$5)",[email,hashedPassword,firstName,number,userType]);
-    const user_id= await db.query('select id from users WHERE email = $1',[email]);
-    if(userType==='shipper'){
-        await db.query("insert into shippers (id,f_name,l_name,region,city) values($1,$2,$3,$4,$5)",[user_id.rows[0].id,firstName,lastName,region,city]);
-    }else{
-      await db.query("insert into carriers (id,f_name,l_name,region,city,tin) values($1,$2,$3,$4,$5,$6)",[user_id.rows[0].id,firstName,lastName,region,city,tinNumber]);
+    const { email, password, firstName, number, lastName, region, city, userType, tinNumber } = req.body;
+    const hashedPassword = await hash(password, 10);
+    
+    // Insert user data into the users table
+    await db.query(
+      "INSERT INTO users (email, password, username, phone_number, user_type) VALUES($1, $2, $3, $4, $5)", 
+      [email, hashedPassword, firstName, number, userType]
+    );
+    
+    // Retrieve the newly created user ID
+    const userResult = await db.query('SELECT id, email, username, phone_number, user_type FROM users WHERE email = $1', [email]);
+    const user = userResult.rows[0];
+    
+    // Insert additional data based on user type
+    if (userType === 'shipper') {
+      await db.query(
+        "INSERT INTO shippers (id, f_name, l_name, region, city) VALUES($1, $2, $3, $4, $5)", 
+        [user.id, firstName, lastName, region, city]
+      );
+    } else {
+      await db.query(
+        "INSERT INTO carriers (id, f_name, l_name, region, city, tin) VALUES($1, $2, $3, $4, $5, $6)", 
+        [user.id, firstName, lastName, region, city, tinNumber]
+      );
     }
+    
     return res.status(201).json({
-      sucess: true,
-      message: 'the registration was sucessful'
-    })
+      success: true,
+      message: 'The registration was successful',
+      data: user
+    });
+    
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({
-      sucess: false,
-      message: 'the registration was not sucessful'
-    })
+      success: false,
+      message: 'The registration was not successful'
+    });
   }
 };
 
-export const login = async(req,res)=>{
-  let user= req.user;
+
+export const login = async (req, res) => {
+  let user = req.user;
   user.password = undefined;
-  let payload={
-    id: user.id,
-    email: user.email,
-    name: user
-  }
+
   try {
-    const token = jwt.sign(payload, SECRET);
+    const token = sign({ id: user.id }, SECRET); // Include only user id in the token
     res.cookie('token', token, {
-      // httpOnly removed for client-side access
+      httpOnly: true,
     });
     res.status(200).json({
       success: true,
-      message: 'Logged in successfully'
+      message: 'Logged in successfully',
+      data: user // Include user data in the response
     });
   } catch (error) {
     console.error(error);
@@ -68,27 +84,29 @@ export const login = async(req,res)=>{
     });
   }
 };
+
+
 export const protect = async (req, res) => {
   try {
     return res.status(200).json({
-      info: 'protected info',
-    })
+      info: 'Protected info',
+    });
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
   }
-}
+};
 
-export const logout = async(req,res)=>{
+export const logout = async (req, res) => {
   try {
     return res.status(200).clearCookie('token', { httpOnly: true }).json({
       success: true,
-      message: 'Logged out succefully',
-    })
+      message: 'Logged out successfully',
+    });
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({
-      sucess: false,
-      message: 'can not logged out now'
-    })
+      success: false,
+      message: 'Cannot log out now'
+    });
   }
-}
+};

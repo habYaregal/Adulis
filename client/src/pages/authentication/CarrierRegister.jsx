@@ -63,6 +63,7 @@ const CarrierRegister = () => {
         city: "",
         password: "",
         confirmPassword: "",
+        tinNumber:'',
       });
       dispatch(authenticateUser());
       localStorage.setItem('isAuth', 'true');
@@ -251,8 +252,8 @@ const CarrierRegister = () => {
                 </label>
                 <input
                   type="number"
-                  name="TINnumber"
-                  value={values.recoverEmail}
+                  name="tinNumber"
+                  value={values.tinNumber}
                   onChange={onChange}
                   tabIndex="0"
                   className="w-full p-3 mt-3 bg-gray-100 border rounded border-gray-200 focus:outline-none focus:border-gray-600 text-sm font-medium leading-none text-gray-800"

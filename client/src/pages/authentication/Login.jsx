@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { onLogin } from "../../api/auth";
 import { useDispatch } from "react-redux";
 import { authenticateUser } from "../../redux/slices/authSlice";
 
 import logo from "../../assets/images/Adulis-logo.png";
 import truck3 from "../../assets/images/Truck3.jpg";
+import UserProfile from "./example";
 const Login = () => {
   const [values, setValues] = useState({
     email: "",
@@ -22,13 +23,14 @@ const Login = () => {
       await onLogin(values);
       dispatch(authenticateUser());
       localStorage.setItem("isAuth", "true");
-
-
     } catch (error) {
       setError(error.response.data.errors[0].msg);
       setSuccess("");
     }
   };
+ 
+
+  
   return (
     <>
       <div className="min-h-full flex">

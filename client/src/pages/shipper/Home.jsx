@@ -6,6 +6,7 @@ import StarredShipper from "./StarredShipper";
 import Contact from "../landing/Contact";
 import ShipperStat from "./ShipperStat";
 import ShipperTestimony from "./ShipperTestimony";
+import UserProfile from "../authentication/example";
 
 
 const ShipperHome =()=>{
@@ -13,6 +14,7 @@ const ShipperHome =()=>{
         <>
             <ShipperNavigation/>
             <ShipperHero/>
+            <UserProfile/>
             <ShipperStat/>
             <StarredShipper/>
             <StepGuide/>

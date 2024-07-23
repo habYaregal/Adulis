@@ -12,17 +12,35 @@ import CarrierRegister from '../pages/authentication/CarrierRegister';
 import CarrierHome from '../pages/carrier/Home';
 import CarrierBids from '../pages/carrier/CarrierBids';
 import ShipperBidsHome from '../pages/shipper/bids/Home';
+import NewTruck from '../pages/carrier/NewTruck';
+import Trucks from '../pages/shipper/trucks/Trucks.jsx'
 
-const PrivateRoutes = () => {
-  const { isAuth } = useSelector((state) => state.auth);
+const PrivateRoutes = ({ allowedRoles }) => {
+  const { isAuth, user } = useSelector((state) => state.auth);
 
-  return <>{isAuth ? <Outlet /> : <Navigate to="/login" />}</>;
+  return (
+    <>
+      {isAuth && user && allowedRoles.includes(user.user_type) ? (
+        <Outlet />
+      ) : (
+        <Navigate to="/login" />
+      )}
+    </>
+  );
 };
 
 const RestrictedRoutes = () => {
-  const { isAuth } = useSelector((state) => state.auth);
+  const { isAuth, user } = useSelector((state) => state.auth);
 
-  return <>{!isAuth ? <Outlet /> : <Navigate to="/shipper" />}</>;
+  if (isAuth) {
+    if (user && user.user_type === 'carrier') {
+      return <Navigate to="/carrier" />;
+    } else if (user && user.user_type === 'shipper') {
+      return <Navigate to="/shipper" />;
+    }
+  }
+
+  return <Outlet />;
 };
 
 const router = createBrowserRouter([
@@ -35,7 +53,7 @@ const router = createBrowserRouter([
     element: <ChooseUser />,
   },
   {
-    element: <PrivateRoutes />,
+    element: <PrivateRoutes allowedRoles={['shipper']} />, // Only allow shippers
     children: [
       {
         path: '/shipper',
@@ -46,6 +64,19 @@ const router = createBrowserRouter([
         element: <NewShipment />,
       },
       {
+        path: '/shipper_bids',
+        element: <ShipperBidsHome />,
+      },
+      {
+        path: '/trucks',
+        element: <Trucks />
+      },
+    ],
+  },
+  {
+    element: <PrivateRoutes allowedRoles={['carrier']} />, // Only allow carriers
+    children: [
+      {
         path: '/carrier',
         element: <CarrierHome />,
       },
@@ -54,8 +85,8 @@ const router = createBrowserRouter([
         element: <CarrierBids />,
       },
       {
-        path: '/shipper_bids',
-        element: <ShipperBidsHome />,
+        path: '/new_truck',
+        element: <NewTruck />,
       },
     ],
   },
@@ -77,6 +108,7 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
 
 const Auth = () => {
   return (
