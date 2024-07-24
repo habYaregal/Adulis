@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage } from "../../../firebase"; 
 import { onShipmentPost } from "../../../api/shipment"; 
@@ -17,6 +17,14 @@ const ShipmentPost = () => {
   const [success, setSuccess] = useState("");
   const maxCharCount = 800;
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (userData && userData.id) {
+      setUserId(userData.id);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,8 +65,13 @@ const ShipmentPost = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    if (!userId) {
+      setError("User not logged in.");
+      return;
+    }
+
     try {
-      const { data } = await onShipmentPost(formValues);
+      const { data } = await onShipmentPost({ ...formValues, userId });
       setError("");
       setSuccess(data.message);
 
@@ -74,8 +87,10 @@ const ShipmentPost = () => {
       setUploadProgress(0);
     } catch (error) {
       console.error("Error creating shipment:", error);
+      setError("Error creating shipment.");
     }
   };
+
   return (
     <div>
       <div className="heading text-center font-bold text-2xl m-5 text-gray-800">

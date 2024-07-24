@@ -16,8 +16,10 @@ export default function ShipmentList() {
   const [isSubmitBidOpen, setIsSubmitBidOpen] = useState(false);
   const [selectedShipmentId, setSelectedShipmentId] = useState(null);
 
+  // Reverse the products list and calculate total pages
   const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
 
+  // Slice the reversed products list for the current page
   const currentProducts = products.slice(
     (currentPage - 1) * PRODUCTS_PER_PAGE,
     currentPage * PRODUCTS_PER_PAGE
@@ -49,7 +51,8 @@ export default function ShipmentList() {
     const fetchData = async () => {
       try {
         const { data } = await onShipmentGet();
-        setProducts(data);
+        // Reverse the array before setting it to state
+        setProducts(data.reverse());
         setLoading(false);
       } catch (error) {
         console.error("Error fetching shipment data:", error);

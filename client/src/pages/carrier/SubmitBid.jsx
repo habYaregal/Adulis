@@ -1,12 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SubmitBidModal from "../../components/SubmitBidModal"; // Adjust the path as necessary
 import { onBidSubmit } from "../../api/bids";
 
 const SubmitBid = ({ isOpen, onClose, shipmentId }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (userData && userData.id) {
+      setUserId(userData.id);
+      setFormData((prevData) => ({
+        ...prevData,
+        carrier_id: userData.id
+      }));
+    }
+  }, []);
+
   const [formData, setFormData] = useState({
     remark: "",
     amount: "",
+    carrier_id: userId
   });
 
   const modalHandler = (e) => {
@@ -37,6 +51,7 @@ const SubmitBid = ({ isOpen, onClose, shipmentId }) => {
     setFormData({
       remark: "",
       amount: "",
+      carrier_id: userId // Ensure carrier_id is set
     });
     console.log("Submitted data:", dataToSubmit);
     setIsModalOpen(true);

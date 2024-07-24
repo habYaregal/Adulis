@@ -14,6 +14,7 @@ import CarrierBids from '../pages/carrier/CarrierBids';
 import ShipperBidsHome from '../pages/shipper/bids/Home';
 import NewTruck from '../pages/carrier/NewTruck';
 import Trucks from '../pages/shipper/trucks/Trucks.jsx'
+import ShipperMessage from '../pages/shipper/messages/Home.jsx';
 
 const PrivateRoutes = ({ allowedRoles }) => {
   const { isAuth, user } = useSelector((state) => state.auth);
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: '/trucks',
         element: <Trucks />
+      },
+      {
+        path: '/message',
+        element: <ShipperMessage />
       },
     ],
   },

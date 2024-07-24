@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { onGetTrucks } from '../../../api/truck'; // Adjust the import path as needed
+
+const TRUCKS_PER_PAGE = 6;
 
 const TruckList = () => {
   const [trucks, setTrucks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchTrucks = async () => {
@@ -29,6 +32,25 @@ const TruckList = () => {
     )
   );
 
+  const totalPages = Math.ceil(filteredTrucks.length / TRUCKS_PER_PAGE);
+
+  const currentTrucks = filteredTrucks.slice(
+    (currentPage - 1) * TRUCKS_PER_PAGE,
+    currentPage * TRUCKS_PER_PAGE
+  );
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   if (loading) return <p className="text-center mt-4">Loading...</p>;
   if (error) return <p className="text-center text-red-600 mt-4">{error}</p>;
 
@@ -45,7 +67,7 @@ const TruckList = () => {
         />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredTrucks.map(truck => (
+        {currentTrucks.map(truck => (
           <div key={truck.license_plate} className="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
             <div className="flex flex-col md:flex-row">
               <div className="md:w-40">
@@ -84,6 +106,24 @@ const TruckList = () => {
             </div>
           </div>
         ))}
+      </div>
+      {/* Pagination controls */}
+      <div className="mt-8 flex justify-between">
+        <button
+          onClick={handlePrevPage}
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l transition-colors duration-200"
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="flex items-center font-bold">{`Page ${currentPage} of ${totalPages}`}</span>
+        <button
+          onClick={handleNextPage}
+          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r transition-colors duration-200"
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

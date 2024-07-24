@@ -2,11 +2,10 @@ import { db } from "../db/index.js";
 
 export const submitBid = async (req, res) => {
   try {
-    const { amount, remark, shipmentId } = req.body;
-
+    const { amount, remark, shipmentId,carrier_id } = req.body;
     const result = await db.query(
       "INSERT INTO bids (shipment_id, bid_amount, carrier_remark, carrier_id, status) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [shipmentId, amount, remark, 22, "pending"]
+      [shipmentId, amount, remark, carrier_id, "pending"]
     );
 
     // Send success response to client
@@ -24,8 +23,9 @@ export const submitBid = async (req, res) => {
 };
 export const carrierBid = async (req, res) => {
   try {
+    const carrierId = req.query.carrier_id;
     const result = await db.query(
-      "SELECT s.title, s.origin,s.destination,b.bid_amount,b.status FROM shipments s INNER JOIN bids b ON s.id = b.shipment_id"
+      "SELECT s.title, s.origin,s.destination,b.bid_amount,b.status FROM shipments s INNER JOIN bids b ON s.id = b.shipment_id WHERE b.carrier_id = $1",[carrierId]
     );
     res.json(result.rows);
   } catch (error) {
@@ -35,15 +35,17 @@ export const carrierBid = async (req, res) => {
 
 export const shipperBid = async (req, res) => {
     try {
+      const shipperId = req.query.shipper_id;
+      console.log(shipperId)
       const result = await db.query(
-        "SELECT s.title, s.img_url, b.bid_amount,b.id, c.f_name, c.l_name, c.city FROM bids b JOIN shipments s ON b.shipment_id = s.id JOIN carriers c ON b.carrier_id = c.id where b.status!=$1",['rejected']
+        "SELECT s.title, s.img_url, b.bid_amount,b.id, c.f_name, c.l_name, c.city FROM bids b JOIN shipments s ON b.shipment_id = s.id JOIN carriers c ON b.carrier_id = c.id where b.status!=$1 AND s.shipper_id=$2",['rejected',shipperId]
       );
       res.json(result.rows);
     } catch (error) {
       console.log(error.message);
     }
   };
-  export const bidStatus = async (req, res) => {
+export const bidStatus = async (req, res) => {
     const id = req.params.id; 
     const { status } = req.body;
 

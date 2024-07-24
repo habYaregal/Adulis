@@ -5,19 +5,25 @@ function ShipperBids() {
   const [bids, setBids] = useState([]);
   const [error, setError] = useState(null);
 
+
   useEffect(() => {
-    const fetchBids = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await onShipperBidGet();
-        setBids(data);
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (userData && userData.id) {
+          const userId = userData.id;
+          const response = await onShipperBidGet(userId);
+          setBids(response.data);
+        }
       } catch (error) {
-        console.error("Error fetching bids:", error);
-        setError("Failed to fetch bids");
+        console.error("Error fetching carrier bids:", error);
+       
       }
     };
-    
-    fetchBids();
+
+    fetchData();
   }, []);
+
 
   const handleAccept = async (id) => {
     try {

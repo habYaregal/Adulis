@@ -44,8 +44,12 @@ const CarrierBids = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await onCarrierBidGet();
-        setBids(data);
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (userData && userData.id) {
+          const userId = userData.id;
+          const response = await onCarrierBidGet(userId);
+          setBids(response.data);
+        }
         setLoading(false);
       } catch (error) {
         console.error("Error fetching carrier bids:", error);
